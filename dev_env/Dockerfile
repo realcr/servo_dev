@@ -36,18 +36,14 @@ RUN apt update && \
 	curl \
 	git \
 	tmux \
+	python \
+	python-pip \
     	vim && \
     apt clean
 
 
-# Install python and virtualenv:
-COPY assets/install_python.sh /setup/install_python.sh
-RUN chmod a+x /setup/install_python.sh && \
-     	sync && \
-     	/setup/install_python.sh && \
-     	rm -rf /setup && \
-	pip install virtualenvwrapper 
-
+# virtualenv:
+RUN pip install virtualenvwrapper
 
 # Create developer user:
 RUN useradd -ms /bin/bash developer && \
