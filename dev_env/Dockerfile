@@ -30,6 +30,7 @@ RUN apt update && \
 	libssl-dev \
 	libxmu6 \
 	libxmu-dev \
+	module-init-tools \
 	sudo \
 	xorg-dev && \
     apt install -y \
@@ -41,6 +42,16 @@ RUN apt update && \
     	vim && \
     apt clean
 
+
+# Install nvidia related driver:
+# ADD assets/nvidia-driver.run /tmp/nvidia-driver.run
+# RUN /bin/sh /tmp/nvidia-driver.run -a -N -ui=none --no-kernel-module && \
+	# 	rm /tmp/nvidia-driver.run
+
+# Install nvidia driver:
+RUN apt update && \
+	DEBIAN_FRONTEND=noninteractive apt install -y nvidia-340 -y && \
+	apt clean
 
 # virtualenv:
 RUN pip install virtualenvwrapper
