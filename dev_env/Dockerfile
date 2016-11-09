@@ -48,9 +48,7 @@ RUN pip install virtualenvwrapper
 # Create developer user:
 RUN useradd -ms /bin/bash developer && \
     adduser developer sudo && \
-    passwd -d developer
-
-# echo "developer ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/developer
+    echo "developer ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/developer
 
 ENV HOME /home/developer
 USER developer
