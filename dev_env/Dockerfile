@@ -35,6 +35,7 @@ RUN apt update && \
     apt install -y \
 	curl \
 	git \
+	tmux \
     	vim && \
     apt clean
 
