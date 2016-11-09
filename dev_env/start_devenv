@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+
+# Show commands being run, and stop on error:
+set -ex
+
+# Enable GUI programs from the running docker container to use the host's
+# X server for display.
+xhost local:root
+
+# Build docker image:
+docker build --tag servo_dev_image .
+
+# Remove previous docker container (Might exist if dev env was not properly
+# closed.)
+docker rm servo_dev_cont || :
+
+# Start docker container:
+# --security-opt option adds capabilities for the processes inside the docker container.
+
+docker run --name servo_dev_cont \
+	-ti --rm --pid=host -e DISPLAY=unix$DISPLAY \
+	-v /tmp/.X11-unix:/tmp/.X11-unix \
+	-v $(readlink -f ./../):/home/developer/servo \
+	-v /var/run/docker.sock:/var/run/docker.sock \
+	--security-opt seccomp:./assets/seccomp.json \
+	--net=host \
+	servo_dev_image \
+	sh -c "sudo chown -R developer:developer /var/run/docker.sock && bash"
+
+# Cleanup temporary directory:
+rm -rf ./temp
+
+set +ex
