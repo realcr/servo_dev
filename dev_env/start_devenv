@@ -24,6 +24,10 @@ docker run --name servo_dev_cont \
 	-v /var/run/docker.sock:/var/run/docker.sock \
 	--security-opt seccomp:./assets/seccomp.json \
 	--net=host \
+	--device /dev/dri \
+	--device /dev/nvidia0 \
+	--device /dev/nvidiactl \
+	--device /dev/nvidia-uvm \
 	servo_dev_image \
 	sh -c "sudo chown -R developer:developer /var/run/docker.sock && bash"
 
