@@ -6,12 +6,16 @@ FROM ubuntu:16.10
 RUN locale-gen en_US.UTF-8
 ENV LANG en_US.UTF-8
 
+# Use the "noninteractive" debconf frontend
+# This makes sure that apt-get installations don't start to ask us questions.
+ENV DEBIAN_FRONTEND noninteractive
+
 # Make sure we use bash and not sh:
 RUN rm /bin/sh && ln -s /bin/bash /bin/sh
 
 # Install packages and some useful utils:
-RUN apt update && \
-    apt install -y \
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
 	autoconf \
 	build-essential \
 	cmake \
@@ -33,14 +37,21 @@ RUN apt update && \
 	module-init-tools \
 	sudo \
 	xorg-dev && \
-    apt install -y \
+    apt-get install -y --no-install-recommends \
 	curl \
 	git \
 	tmux \
 	python \
 	python-pip \
     	vim && \
-    apt clean
+    apt-get clean
+
+
+# Install nvidia package:
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+	nvidia-340 && \
+    apt-get clean
 
 
 # Install nvidia related driver:
@@ -49,12 +60,14 @@ RUN apt update && \
 	# 	rm /tmp/nvidia-driver.run
 
 # Install nvidia driver:
-RUN apt update && \
-	DEBIAN_FRONTEND=noninteractive apt install -y nvidia-340 -y && \
-	apt clean
+# RUN apt-get update && \
+	#	DEBIAN_FRONTEND=noninteractive apt install -y nvidia-340 -y && \
+	# apt clean
 
 # virtualenv:
-RUN pip install virtualenvwrapper
+RUN pip install --upgrade setuptools && \
+	pip install --upgrade pip && \
+	pip install virtualenvwrapper
 
 # Create developer user:
 RUN useradd -ms /bin/bash developer && \
@@ -63,3 +76,6 @@ RUN useradd -ms /bin/bash developer && \
 
 ENV HOME /home/developer
 USER developer
+
+# Added to solve build problem with mach (python can not detect shell)
+ENV SHELL /bin/bash
